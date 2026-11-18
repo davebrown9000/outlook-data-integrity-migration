@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {"folder": "Inbox"},
+    {"folder": "Archive/Receipts"},
+    {"folder": "Archive/Travel"},
+    {"folder": "Archive/Reference"}
+  ],
+  "messages": [
+    {"stable_id": "fiction-001", "folder": "Inbox", "category": "receipt"},
+    {"stable_id": "fiction-002", "folder": "Inbox", "category": "travel"},
+    {"stable_id": "fiction-003", "folder": "Archive/Reference", "category": "reference"},
+    {"stable_id": "fiction-004", "folder": "Inbox", "category": "unknown"}
+  ],
+  "decisions": [
+    {"stable_id": "fiction-001", "expected_source": "Inbox", "destination": "Archive/Receipts"},
+    {"stable_id": "fiction-002", "expected_source": "Inbox", "destination": "Archive/Travel"},
+    {"stable_id": "fiction-003", "expected_source": "Archive/Reference", "destination": "Archive/Reference"}
+  ]
+}
