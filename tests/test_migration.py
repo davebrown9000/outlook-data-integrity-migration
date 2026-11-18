@@ -67,6 +67,31 @@ class MigrationTests(unittest.TestCase):
         with self.assertRaisesRegex(MigrationError, "destination reconciliation"):
             reconcile(self.data["messages"], after, p)
 
+    def test_reconciliation_rejects_modified_existing_attribute(self):
+        p = self.plan()
+        after = simulate_plan(self.data["messages"], p)
+        after[0]["subject"] = "Unexpected replacement"
+        with self.assertRaisesRegex(MigrationError, "record attributes changed"):
+            reconcile(self.data["messages"], after, p)
+
+    def test_reconciliation_rejects_added_attribute(self):
+        p = self.plan()
+        after = simulate_plan(self.data["messages"], p)
+        after[0]["unplanned_metadata"] = "introduced"
+        with self.assertRaisesRegex(MigrationError, "record attributes changed"):
+            reconcile(self.data["messages"], after, p)
+
+    def test_reconciliation_preserves_all_other_fields(self):
+        p = self.plan()
+        after = simulate_plan(self.data["messages"], p)
+        report = reconcile(self.data["messages"], after, p)
+        self.assertTrue(report["identities_preserved"])
+        before_by_id = {r["stable_id"]: r for r in self.data["messages"]}
+        for row in after:
+            original = before_by_id[row["stable_id"]]
+            self.assertEqual({k: v for k, v in original.items() if k != "folder"},
+                             {k: v for k, v in row.items() if k != "folder"})
+
     def test_input_not_mutated(self):
         before = deepcopy(self.data["messages"])
         simulate_plan(self.data["messages"], self.plan())
