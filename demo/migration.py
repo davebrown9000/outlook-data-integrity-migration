@@ -82,7 +82,7 @@ def simulate_plan(messages: list[dict[str, Any]], plan: list[dict[str, str]]) ->
 
 def reconcile(before: list[dict[str, Any]], after: list[dict[str, Any]],
               plan: list[dict[str, str]]) -> dict[str, Any]:
-    """Check stable-ID preservation, message totals and planned destinations."""
+    """Check identities, destinations and preservation of non-location attributes."""
     a = _unique_index(before, "stable_id", "before-message")
     b = _unique_index(after, "stable_id", "after-message")
     if set(a) != set(b):
@@ -93,6 +93,10 @@ def reconcile(before: list[dict[str, Any]], after: list[dict[str, Any]],
         target = planned[stable_id]["destination"] if stable_id in planned else original.get("folder")
         if b[stable_id].get("folder") != target:
             raise MigrationError(f"destination reconciliation failed: {stable_id}")
+        original_payload = {k: v for k, v in original.items() if k != "folder"}
+        after_payload = {k: v for k, v in b[stable_id].items() if k != "folder"}
+        if original_payload != after_payload:
+            raise MigrationError(f"record attributes changed: {stable_id}")
         if stable_id in planned and planned[stable_id]["action"] == "move":
             moved += 1
     counts_before = dict(sorted(Counter(row.get("folder") for row in before).items()))
