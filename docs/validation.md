@@ -9,6 +9,7 @@
 | Unclassified messages remain unchanged | Only explicit plan items are simulated | Preserve source |
 | All identities survive a simulated migration | Before/after ID sets compared | Reconciliation error |
 | Final location matches decision | Every ID checked against planned destination | Reconciliation error |
+| Other message attributes remain unchanged | Compare complete before/after records excluding the location field | Reconciliation error |
 | Source data are not mutated | Copy-on-write simulation | Test failure |
 
 ## What these checks do not prove
