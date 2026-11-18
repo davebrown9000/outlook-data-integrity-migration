@@ -1,0 +1,27 @@
+name: Synthetic demonstration tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - name: Run Python unit tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Run fictional mailbox reconciliation
+        run: python -m demo.migration --input data/fictional_mailbox.json > /dev/null
